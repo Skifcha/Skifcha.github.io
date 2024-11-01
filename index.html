@@ -41,10 +41,10 @@
 
         .navbar {
             position: absolute;
-            left: 343px;
-            top: 980px;
-            width: 1577px;
-            height: 100px;
+            left: 17.86%;
+            top: 90.74%;
+            width: 82.14%;
+            height: 9.26%;
             display: flex;
         }
 
@@ -56,17 +56,17 @@
 
         .special-link {
             position: absolute;
-            width: 247px;
-            height: 54px;
+            width: 12.86%;
+            height: 5%;
             cursor: pointer;
         }
 
         .page-1-link {
             position: absolute;
-            left: 100px;
-            top: 631px;
-            width: 545px;
-            height: 108px;
+            left: 5.2%;
+            top: 58.43%;
+            width: 28.39%;
+            height: 10%;
             cursor: pointer;
         }
     </style>
@@ -74,7 +74,7 @@
 </head>
 <body>
     <script>
-        
+
         function createPage(id, imgSrc, prevPage, nextPage) {
             const pageDiv = document.createElement('div');
             pageDiv.classList.add('page');
@@ -90,9 +90,9 @@
                         <div class="nav-left" ${prevPage ? `onclick="navigateToPage(${prevPage})"` : ''}></div>
                         <div class="nav-right" ${nextPage ? `onclick="navigateToPage(${nextPage})"` : ''}></div>
                     </div>
-                    <div class="special-link" style="left: 48px; top: 335px;" onclick="navigateToPage(1)"></div>
-                    <div class="special-link" style="left: 48px; top: 393px;" onclick="navigateToPage(2)"></div>
-                    <div class="special-link" style="left: 48px; top: 453px;" onclick="navigateToPage(5)"></div>` : 
+                    <div class="special-link" style="left: 2.5%; top: 31.02%;" onclick="navigateToPage(1)"></div>
+                    <div class="special-link" style="left: 2.5%; top: 36.39%;" onclick="navigateToPage(2)"></div>
+                    <div class="special-link" style="left: 2.5%; top: 41.94%;" onclick="navigateToPage(5)"></div>` : 
                     `<div class="page-1-link" onclick="navigateToPage(2)"></div>`
                 }
             `;
