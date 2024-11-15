@@ -78,11 +78,34 @@
             height: 10.93%;
             cursor: pointer;
         }
+
+        .page-111-link {
+            position: absolute;
+            left: 5.2%;
+            top: 61.48%;
+            width: 28.39%;
+            height: 10%;
+            cursor: pointer;
+        }
+
+        .page-112-link {
+            position: absolute;
+            left: 5.2%;
+            top: 71.11%;
+            width: 28.39%;
+            height: 10.93%;
+            cursor: pointer;
+        }
     </style>
     <title>Telequant</title>
 </head>
 <body>
     <script>
+        let idleTimeout;
+        const idleInterval = 180000; // 3 minutes or 180 seconds
+        const cycleRotationInterval = 6000; // 6 seconds
+        let isImageRotating = false;
+        let imageRotationTimeout;
 
         function createPage(id, imgSrc, prevPage, nextPage) {
             const pageDiv = document.createElement('div');
@@ -94,7 +117,7 @@
             pageDiv.innerHTML = `
                 <img src="${imgSrc}" alt="Page ${id}" />                
                 ${ 
-                    (id !== 1 && id !== 19) ? 
+                    (id !== 1 && id !== 111 && id !== 112 && id !== 19) ? 
                     `<div class="navbar">
                         <div class="nav-left" ${prevPage ? `onclick="navigateToPage(${prevPage})"` : ''}></div>
                         <div class="nav-right" ${nextPage ? `onclick="navigateToPage(${nextPage})"` : ''}></div>
@@ -107,25 +130,68 @@
                     <div class="special-link" style="left: 2.5%; top: 58.61%;" onclick="navigateToPage(16)"></div>
                     <div class="special-link" style="left: 2.5%; top: 64.17%;" onclick="navigateToPage(18)"></div>`
                     : (id === 1) ? `<div class="page-1-link" onclick="navigateToPage(2)"></div>`
+                    : (id === 111) ? `<div class="page-111-link" onclick="navigateToPage(2)"></div>`
+                    : (id === 112) ? `<div class="page-112-link" onclick="navigateToPage(2)"></div>`
                     : (id === 19) ? `<div class="page-19-link" onclick="navigateToPage(1)"></div>` : ``
                 }
             `;
             document.body.appendChild(pageDiv);
         }
 
-        function navigateToPage(pageNumber) {
+        function navigateToPage(pageNumber, stopRotation = true) {
             const currentPage = document.querySelector('.page.active');
             const nextPage = document.getElementById('page' + pageNumber);
 
             if (currentPage !== nextPage) {
                 currentPage.classList.remove('active');
                 nextPage.classList.add('active');
-                // Ensuring the new page fades in smoothly while the old page fades out
+            }
+            if (isImageRotating && stopRotation) {
+                stopImageRotation();
             }
         }
 
+        function resetIdleTimer() {
+            clearTimeout(idleTimeout);
+            idleTimeout = setTimeout(startImageRotation, idleInterval);
+        }
+
+        function startImageRotation() {
+            isImageRotating = true;            
+            cycleImages();
+        }
+
+        function cycleImages() {
+            const indexes = [1, 111, 112];
+            let index = 0;
+
+            function cycle() {
+                if (!isImageRotating) return;
+                navigateToPage(indexes[index], false);
+                index = (index + 1) % indexes.length;
+                imageRotationTimeout = setTimeout(cycle, cycleRotationInterval);
+            }
+
+            cycle();
+        }
+
+        function stopImageRotation() {
+            isImageRotating = false;
+            clearTimeout(imageRotationTimeout);
+        }
+
+        // Event listeners to detect user activity and reset the timer
+        ['mousemove', 'keydown', 'mousedown', 'scroll', 'touchstart'].forEach(event => {
+            window.addEventListener(event, resetIdleTimer, { passive: true });
+        });
+
+        // Initialize the idle timer
+        resetIdleTimer();
+
         // Create pages dynamically
         createPage(1, 'image1.svg', null, 2);
+        createPage(111, 'image1_2.svg', null, 2);
+        createPage(112, 'image1_3.svg', null, 2);
         createPage(2, 'image2.svg', 1, 3);
         createPage(3, 'image3.svg', 2, 4);
         createPage(4, 'image4.svg', 3, 5);
