@@ -21,11 +21,17 @@
             width: 100%;
             height: 100%;
             opacity: 0;
-            transition: opacity 300ms ease-in-out;
+            transition: all 300ms ease-in-out;
+            -webkit-transition: all 300ms ease-in-out;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 0;
+        }
+
+        .page-slides {
+            transition: all 500ms ease-in-out;
+            -webkit-transition: all 500ms ease-in-out;
         }
 
         .page.active {
@@ -102,7 +108,7 @@
 <body>
     <script>
         let idleTimeout;
-        const idleInterval = 180000; // 3 minutes or 180 seconds
+        const idleInterval = 120000; // 2 minutes or 120 seconds
         const cycleRotationInterval = 6000; // 6 seconds
         let isImageRotating = false;
         let imageRotationTimeout;
@@ -113,6 +119,7 @@
             pageDiv.id = 'page' + id;
 
             if (id === 1) pageDiv.classList.add('active');
+            if (id === 1 || id === 111 || id === 112) pageDiv.classList.add('page-slides');
 
             pageDiv.innerHTML = `
                 <img src="${imgSrc}" alt="Page ${id}" />                
@@ -157,6 +164,7 @@
         }
 
         function startImageRotation() {
+            if (isImageRotating) return;
             isImageRotating = true;            
             cycleImages();
         }
