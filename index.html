@@ -3,93 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поиск слов: Основы Информационной Безопасности</title>
+    <title>Квиз по постквантовой криптографии</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'Onest', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             margin: 0;
-            padding: 20px 10px;
-            background-color: #f0f0f0;
+            padding: 0; 
             min-height: 100vh;
             box-sizing: border-box;
+            color: white; 
+            background: linear-gradient(170.3deg, #BE0773 3.42%, #2B40E8 50.95%, #00A3FF 97.51%);
+            background-attachment: fixed; 
         }
 
-        h1 {
-            color: #333;
+        .header-container {
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
+            margin-top: 35px;
+            /* margin-bottom для отступа до сетки теперь у subtitle */
+            padding: 0 20px; 
         }
 
+        .logo {
+            width: 150px; 
+            height: auto;
+            margin-bottom: 20px; 
+        }
+        
+        .main-title {
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            font-size: 28px;
+            line-height: 99%; 
+            letter-spacing: 0%;
+            text-align: center;
+            color: white;
+            margin-top: 0; /* Убрал верхний, чтобы логотип был главным по отступу */
+            margin-bottom: 15px; 
+        }
+
+        .subtitle {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 110%;
+            letter-spacing: 0%;
+            text-align: center;
+            color: white;
+            max-width: 600px; 
+            margin: 0 auto 26px auto; /* Отступ вниз 26px до game-container (сетки) */
+        }
+
+        /* #game-container теперь только для компоновки */
         #game-container {
             display: flex;
-            gap: 30px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            flex-wrap: wrap;
+            /* gap убран, будем управлять отступами между grid и questions через margin/padding или gap конкретных flex-детей */
+            flex-wrap: wrap; /* Позволит переноситься на очень узких экранах до медиа-запроса */
             width: auto;
-            max-width: calc(100% - 20px); 
-            align-items: flex-start;
+            max-width: calc(100% - 40px); 
+            align-items: flex-start; /* Важно для вертикального выравнивания, если элементы разной высоты */
+            justify-content: center; /* Центрируем контент, если он не занимает всю ширину */
+            margin-bottom: 30px; 
+            /* Убраны: background-color, padding, border-radius, box-shadow */
         }
 
         #grid-container {
             user-select: none;
-             /* Динамический размер сетки может потребовать прокрутки, если станет очень большой */
-            overflow: auto; /* Добавим на всякий случай, если сетка будет огромной */
-            max-width: 100%; /* Чтобы не вылезала за пределы game-container на мобильных */
+            overflow: auto; 
+            /* max-width: 100%; -- не нужно, т.к. #game-container уже ограничивает */
+            margin-right: 20px; /* Отступ от сетки до списка вопросов на десктопе */
         }
+        /* Если на мобильных они в столбик, этот margin-right не нужен, нужен margin-bottom */
+
 
         #letter-grid {
             border-collapse: collapse;
-            margin: 0 auto; /* Центрирование таблицы, если она меньше grid-container */
+            margin: 0 auto; 
         }
 
         #letter-grid td {
-            width: 30px; /* Базовый размер, может адаптироваться */
+            width: 30px; 
             height: 30px;
-            border: 1px solid #ccc;
+            border: 1px solid white; 
             text-align: center;
-            font-size: 16px; /* Чуть уменьшим для потенциально более плотной сетки */
+            font-size: 16px; 
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.2s ease, color 0.2s ease;
-            background-color: #fff;
-            color: #333;
+            background-color: rgba(255, 255, 255, 0.15); 
+            color: white; 
         }
 
         #letter-grid td.selected {
-            background-color: #add8e6;
+            background-color: rgba(255, 255, 255, 0.4); 
+            color: #2B40E8; 
         }
 
         #letter-grid td.found {
-            background-color: #90ee90;
-            color: #145a32;
+            background-color: #28a745; 
+            color: white; 
             font-weight: bold;
         }
         
         #letter-grid td.found.selected {
-            background-color: #add8e6; 
-            color: #333; 
+            background-color: rgba(255, 255, 255, 0.4); 
+            color: #2B40E8; 
         }
 
         #questions-container {
-            max-width: 400px;
+            max-width: 400px; /* Ограничение ширины списка вопросов */
             min-width: 300px; 
             display: flex;
             flex-direction: column;
+            /* background-color: rgba(0,0,0,0.1); /* Легкий фон для блока вопросов, чтобы визуально отделить */
+            /* padding: 15px; */
+            /* border-radius: 8px; */
         }
         
-        h2 {
-            color: #333;
+        #questions-container h2 { 
+            font-family: 'Onest', sans-serif;
+            font-weight: 600; 
+            font-size: 22px;
+            color: white;
             text-align: center;
             margin-top: 0; 
-            margin-bottom: 10px;
-            font-size: 20px;
+            margin-bottom: 15px;
             flex-shrink: 0;
         }
 
@@ -100,12 +140,20 @@
         }
 
         #questions-list li {
-            padding: 8px 5px;
-            border-bottom: 1px solid #eee;
-            font-size: 14px;
+            padding: 10px 5px; 
+            border-bottom: 1px solid rgba(255,255,255,0.2); 
+            font-family: 'Onest', sans-serif;
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 120%;
+            text-indent: 10px;
+            letter-spacing: 0%;
+            color: white; 
             transition: color 0.3s ease, background-color 0.3s ease;
-            color: #555;
-            line-height: 1.4;
+        }
+         #questions-list li.not-placed {
+            opacity: 0.6; 
+            font-style: italic;
         }
         
         #questions-list li:last-child {
@@ -113,125 +161,167 @@
         }
 
         #questions-list li.question-found {
-            color: #28a745;
+            color: #90ee90; 
             text-decoration: line-through;
             font-weight: bold;
-            background-color: #e6ffe6;
+            background-color: rgba(40, 167, 69, 0.3); 
         }
         
         #win-message {
             text-align: center;
             font-size: 24px;
-            color: #28a745;
+            color: #90ee90; 
             margin-top: 20px;
+            background-color: rgba(0,0,0,0.3); 
+            padding: 20px;
+            border-radius: 8px;
         }
         #restart-button-container {
             text-align: center;
             margin-top: 15px;
         }
         #restart-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #007bff;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-family: 'Onest', sans-serif;
+            font-weight: 600;
+            color: #2B40E8; 
+            background-color: white; 
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.1s ease;
         }
         #restart-button:hover {
-            background-color: #0056b3;
+            background-color: #f0f0f0;
+            transform: scale(1.05);
         }
 
+        .footer {
+            width: 100%;
+            max-width: 800px; 
+            margin: 0px auto 20px auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-sizing: border-box;
+        }
 
-        /* Адаптивность для мобильных устройств */
+        .footer-link, .footer-tg {
+            font-family: 'Onest', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 110%;
+            letter-spacing: 0%;
+            color: white;
+        }
+        .footer-link a, .footer-tg a {
+            color: white;
+            text-decoration: underline;
+            text-decoration-style: solid;
+            text-underline-offset: 3px; 
+        }
+         .footer-tg .tg-prefix {
+            text-decoration: none; 
+        }
+
+        /* Адаптивность */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
+            body { padding: 0; }
+            .header-container { margin-top: 25px; margin-bottom: 0; } /* Убрали нижний отступ, т.к. он у .subtitle */
+/*            .main-title { font-size: 24px; } /* Стили шрифта остаются из базовых */*/
+/*            .subtitle { font-size: 15px; margin-bottom: 26px; } /* Стили шрифта остаются, отступ сохраняется */*/
 
-            h1 {
-                font-size: 20px;
-                margin-bottom: 15px;
-            }
-
-            #game-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-                padding: 15px;
+            #game-container { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 20px; /* Теперь gap здесь для отступа между сеткой и вопросами, когда они в столбик */
+                padding: 0 10px; /* Уменьшаем боковые отступы для контейнера игры */
                 max-width: 100%;
+                margin-left: 0;
+                margin-right: 0;
+                box-sizing: border-box;
+            }
+            #grid-container { 
+                width: 100%; /* Чтобы сетка занимала доступную ширину и скроллилась если надо */
+                margin-right: 0; /* Убираем правый отступ на мобильных */
+                /* margin-bottom: 20px; -- теперь через gap у родителя */
+            }
+            /* #letter-grid td стили шрифта/цвета остаются, размер ячейки можно оставить 28px или сделать адаптивным */
+             #letter-grid td { 
+                 width: calc((100vw - 40px - (var(--grid-cols, 10) - 1) * 1px) / var(--grid-cols, 10) ); /* Попытка адаптивного размера ячейки */
+                 height: calc((100vw - 40px - (var(--grid-cols, 10) - 1) * 1px) / var(--grid-cols, 10) );
+                 max-width: 35px; /* Ограничение максимального размера ячейки */
+                 max-height: 35px;
+                 min-width: 24px; /* Ограничение минимального размера ячейки */
+                 min-height: 24px;
+                 font-size: 14px; /* Шрифт ячеек остается */
             }
 
-            #grid-container {
-                /* overflow-x: auto; уже есть выше, и этого достаточно */
+
+            #questions-container { 
+                max-width: 100%; 
                 width: 100%; 
+                min-width: unset; 
+                margin-top: 0; /* Отступ управляется gap у #game-container */
             }
-
-            #letter-grid td {
-                 /* Если сетка 10x10, 28px может быть нормально. Если больше, то размер ячеек может понадобиться уменьшить */
-                 width: 28px; /* Динамически можно менять в JS, если сетка больше */
-                 height: 28px;
-                 font-size: 14px; 
-            }
-
-            #questions-container {
-                max-width: 100%;
-                width: 100%;
-                min-width: unset;
-                margin-top: 0;
-                max-height: none; 
-            }
-
-            #questions-list {
-                overflow-y: visible; 
-                padding-right: 0;
-                font-size: 13px;
-            }
+             /* #questions-list li стили шрифта/цвета остаются */
+/*            #questions-list li { font-size: 16px; text-indent: 5px;} */
             
-            #win-message {
-                font-size: 20px;
-            }
+            #win-message { font-size: 20px; } /* Стили шрифта остаются */
+/*            .footer { flex-direction: column; gap: 10px; text-align: center;}*/
+             /* .footer-link, .footer-tg стили шрифта остаются */
         }
-        @media (max-width: 480px) { /* Для очень маленьких экранов */
-            h1 {
-                font-size: 18px;
-            }
+        
+        @media (max-width: 480px) {
+/*            .main-title { font-size: 20px; }*/
+/*            .subtitle { font-size: 14px; }*/
+/*            #questions-list li { font-size: 15px; }*/
+/*            .footer-link, .footer-tg { font-size: 14px;}*/
+            /* Адаптация размера ячеек для очень маленьких экранов, если предыдущий calc не справляется */
              #letter-grid td {
-                 /*width: 25px; 
-                 height: 25px;
-                 font-size: 12px; */
-                 /* Эти размеры могут стать слишком мелкими, если сетка 15x15. 
-                    Лучше, чтобы #grid-container просто скроллился */
-            }
-            #questions-list li {
-                font-size: 12px;
-                padding: 6px 3px;
-            }
+                 /* Можно добавить более агрессивное уменьшение или оставить как есть */
+             }
         }
     </style>
 </head>
 <body>
-    <h1>Поиск слов: Основы Информационной Безопасности</h1>
+    <div class="header-container">
+        <img src="https://ai-pets-avatars.s3.us-east-1.amazonaws.com/usermodels/qapp-quizz-logo.svg" alt="QAPP Quiz Logo" class="logo">
+        <h1 class="main-title">Квиз по постквантовой криптографии</h1>
+        <p class="subtitle">Найди 5 слов в сетке, отвечая на вопросы-подсказки, и получи вкусный приз! 🍬</p>
+    </div>
     
     <div id="game-container">
         <div id="grid-container">
             <table id="letter-grid"></table>
         </div>
         <div id="questions-container">
-            <h2>Вопросы:</h2>
+            <h2></h2>
             <ul id="questions-list"></ul>
         </div>
     </div>
 
     <div id="win-message" style="display:none;">
-        Поздравляем! Вы нашли все слова!
+        Поздравляем! Вы нашли все доступные слова!
         <div id="restart-button-container">
             <button id="restart-button">Играть снова</button>
         </div>
     </div>
 
+    <footer class="footer">
+        <div class="footer-link">
+            <a href="https://qapp.tech/" target="_blank">qapp.tech</a>
+        </div>
+        <div class="footer-tg">
+            <span class="tg-prefix">tg:</span> <a href="https://t.me/qapptech" target="_blank">@qapptech</a>
+        </div>
+    </footer>
+
     <script>
+        // ВАЖНО: Убедитесь, что слова длиннее 10 букв закомментированы или удалены из этих списков.
         const SIMPLE_QA_RAW = [
             { q: "Проект отечественного квантово-устойчивого алгоритма ЭЦП для стандартизации", a: "Гиперикум" }, // 9
             // { q: "Алгоритм, стойкий к атакам квантового компьютера", a: "Постквантовый" }, // 13
@@ -268,20 +358,20 @@
 
         const NUM_SIMPLE_QUESTIONS = 4;
         const NUM_COMPLEX_QUESTIONS = 1;
-        const BASE_GRID_DIMENSION = 10; // Минимальный размер сетки 10x10
-        const MAX_PLACEMENT_ATTEMPTS_PER_WORD = 200; // Увеличим, т.к. сетка может быть плотнее
+        const MIN_GRID_DIMENSION = 10; 
+        const MAX_GRID_DIMENSION = 12; 
+        const MAX_PLACEMENT_ATTEMPTS_PER_WORD = 250; 
 
-        let CURRENT_QUIZ_QA_LIST = []; // Вопросы для текущей игры
-        let GRID_ROWS = BASE_GRID_DIMENSION;
-        let GRID_COLS = BASE_GRID_DIMENSION;
+        let CURRENT_QUIZ_QA_LIST = []; 
+        let GRID_ROWS = MIN_GRID_DIMENSION;
+        let GRID_COLS = MIN_GRID_DIMENSION;
 
         let grid = []; 
         let selectedCells = []; 
-        let placedWordsData = []; // Это будет подмножество CURRENT_QUIZ_QA_LIST, которое удалось разместить
+        let placedWordsData = []; 
 
         const alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 
-        // Функция для перемешивания массива (Fisher-Yates shuffle)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -290,52 +380,68 @@
         }
 
         function selectQuizQuestions() {
-            shuffleArray(SIMPLE_QA_RAW);
-            shuffleArray(COMPLEX_QA_RAW);
+            const activeSimpleQA = SIMPLE_QA_RAW.filter(qa => qa.a && qa.a.length <= 10);
+            const activeComplexQA = COMPLEX_QA_RAW.filter(qa => qa.a && qa.a.length <= 10);
 
-            const selectedSimple = SIMPLE_QA_RAW.slice(0, NUM_SIMPLE_QUESTIONS);
-            const selectedComplex = COMPLEX_QA_RAW.slice(0, NUM_COMPLEX_QUESTIONS);
+            if (activeSimpleQA.length < NUM_SIMPLE_QUESTIONS) {
+                console.error(`Not enough active simple questions (<=10 letters) (need ${NUM_SIMPLE_QUESTIONS}, have ${activeSimpleQA.length})`);
+                alert("Ошибка: Недостаточно активных простых вопросов (длиной до 10 букв) для викторины.");
+                return false;
+            }
+            if (activeComplexQA.length < NUM_COMPLEX_QUESTIONS) {
+                console.error(`Not enough active complex questions (<=10 letters) (need ${NUM_COMPLEX_QUESTIONS}, have ${activeComplexQA.length})`);
+                alert("Ошибка: Недостаточно активных сложных вопросов (длиной до 10 букв) для викторины.");
+                return false;
+            }
+
+            shuffleArray(activeSimpleQA);
+            shuffleArray(activeComplexQA);
+
+            const selectedSimple = activeSimpleQA.slice(0, NUM_SIMPLE_QUESTIONS);
+            const selectedComplex = activeComplexQA.slice(0, NUM_COMPLEX_QUESTIONS);
             
             CURRENT_QUIZ_QA_LIST = [...selectedSimple, ...selectedComplex].map((item, index) => ({
                 question: item.q,
                 answer: item.a.toUpperCase().replace(/\s+/g, ''),
                 originalAnswer: item.a,
-                id: `question-${index}-${item.a.toUpperCase().replace(/\s+/g, '').replace(/[^A-ZА-Я0-9]/ig, '')}`, // Добавим индекс для уникальности ID
+                id: `question-${index}-${item.a.toUpperCase().replace(/\s+/g, '').replace(/[^A-ZА-Я0-9]/ig, '')}`, 
                 found: false,
                 cells: [] 
             }));
-            shuffleArray(CURRENT_QUIZ_QA_LIST); // Перемешаем итоговый список для случайного порядка в UI
+            shuffleArray(CURRENT_QUIZ_QA_LIST); 
             console.log("Selected questions for this quiz:", CURRENT_QUIZ_QA_LIST.map(q => q.originalAnswer));
+            return true;
         }
 
         function determineGridSize() {
             let maxLength = 0;
-            CURRENT_QUIZ_QA_LIST.forEach(qa => {
-                if (qa.answer.length > maxLength) {
-                    maxLength = qa.answer.length;
-                }
-            });
-
-            // Даем небольшой запас, чтобы слова не были впритык к краям, и было место для других.
-            // +2 или +3 к максимальной длине слова.
-            // И чтобы было место для 5 слов, даже если они все короткие.
-            // Пытаемся сохранить примерно квадратную форму.
-            const totalLetters = CURRENT_QUIZ_QA_LIST.reduce((sum, qa) => sum + qa.answer.length, 0);
-            const estimatedMinArea = totalLetters * 2; // Примерная площадь с учетом "мусора"
-            
-            let dimension = Math.max(BASE_GRID_DIMENSION, maxLength + 1); // +1 чтобы слово не было впритык
-            
-            // Убедимся, что площадь сетки достаточна для размещения
-            // (очень грубая оценка, т.к. размещение сложное)
-            while (dimension * dimension < estimatedMinArea && dimension < 30) { // Ограничим максимальный размер сетки
-                dimension++;
+            if (CURRENT_QUIZ_QA_LIST.length > 0) {
+                CURRENT_QUIZ_QA_LIST.forEach(qa => {
+                    if (qa.answer.length > maxLength) {
+                        maxLength = qa.answer.length;
+                    }
+                });
+            } else {
+                GRID_ROWS = MIN_GRID_DIMENSION;
+                GRID_COLS = MIN_GRID_DIMENSION;
+                console.log(`No questions selected, defaulting grid to ${GRID_ROWS}x${GRID_COLS}`);
+                return;
             }
-            // Если самое длинное слово очень большое, оно определяет размер
-            dimension = Math.max(dimension, maxLength + 1);
-
+            
+            let dimension;
+             if (maxLength <= 7) { 
+                dimension = MIN_GRID_DIMENSION; 
+            } else if (maxLength <= 9) { 
+                dimension = Math.max(MIN_GRID_DIMENSION, maxLength + 2); 
+            } else { 
+                dimension = Math.max(MIN_GRID_DIMENSION, maxLength + 1); 
+            }
+            dimension = Math.min(dimension, MAX_GRID_DIMENSION); 
 
             GRID_ROWS = dimension;
             GRID_COLS = dimension;
+            // Устанавливаем CSS переменную для адаптивного размера ячеек
+            document.documentElement.style.setProperty('--grid-cols', GRID_COLS);
             console.log(`Determined grid size: ${GRID_ROWS}x${GRID_COLS} (maxLengthWord: ${maxLength})`);
         }
         
@@ -344,40 +450,47 @@
             placedWordsData = [];
             CURRENT_QUIZ_QA_LIST = [];
             document.getElementById('win-message').style.display = 'none';
-            // Удаляем старые обработчики, если они были (на всякий случай, хотя renderGrid их пересоздает)
-            const oldGridCells = document.querySelectorAll('#letter-grid td');
-            oldGridCells.forEach(td => {
-                const newTd = td.cloneNode(true); // Клонируем без обработчиков
-                td.parentNode.replaceChild(newTd, td);
-            });
+            
+            const gridTable = document.getElementById('letter-grid');
+            if (gridTable) gridTable.innerHTML = '';
+            
+            const questionsUl = document.getElementById('questions-list');
+            if (questionsUl) questionsUl.innerHTML = '';
+            
             initGame();
         }
 
-
         function initGame() {
             console.log("Initializing new game...");
-            selectQuizQuestions();
-            if (CURRENT_QUIZ_QA_LIST.length === 0) {
-                alert("Ошибка: не удалось выбрать вопросы для игры.");
+            if (!selectQuizQuestions()) {
+                const gridTable = document.getElementById('letter-grid');
+                if (gridTable) gridTable.innerHTML = '<tr><td>Ошибка загрузки вопросов.</td></tr>';
+                const questionsUl = document.getElementById('questions-list');
+                if (questionsUl) questionsUl.innerHTML = '<li>Пожалуйста, проверьте консоль и списки слов.</li>';
+                document.getElementById('game-container').style.display = 'none';
                 return;
             }
+            document.getElementById('game-container').style.display = 'flex';
+
+
+            if (CURRENT_QUIZ_QA_LIST.length === 0) {
+                alert("Критическая ошибка: список вопросов для игры пуст после выбора.");
+                return;
+            }
+
             determineGridSize();
-            
             prepareGridData();
             renderGrid();
             renderQuestions();
 
             if (placedWordsData.length < CURRENT_QUIZ_QA_LIST.length) {
-                 console.warn(`Could only place ${placedWordsData.length} out of ${CURRENT_QUIZ_QA_LIST.length} selected words. Grid might be too small or placement too difficult.`);
-                 // Можно добавить сообщение пользователю, если не все слова размещены, но это усложнит игру.
-                 // Для теста из 5 слов это должно быть редкой ситуацией при адекватном размере сетки.
+                 console.warn(`Could only place ${placedWordsData.length} out of ${CURRENT_QUIZ_QA_LIST.length} selected words. Grid: ${GRID_ROWS}x${GRID_COLS}.`);
             }
             if (placedWordsData.length === 0 && CURRENT_QUIZ_QA_LIST.length > 0) {
                  console.error("CRITICAL: No words were placed from the selected quiz words.");
-                 alert("Критическая ошибка: не удалось разместить ни одного слова на сетке. Попробуйте перезапустить игру.");
+                 alert("Критическая ошибка: не удалось разместить ни одного слова на сетке. Попробуйте перезапустить игру или проверьте слова.");
             }
         }
-
 
         function getRandomLetter() {
             return alphabet[Math.floor(Math.random() * alphabet.length)];
@@ -385,16 +498,14 @@
 
         function prepareGridData() {
             grid = Array(GRID_ROWS).fill(null).map(() => Array(GRID_COLS).fill(null));
-            placedWordsData = []; // Сбрасываем перед каждой попыткой генерации
+            placedWordsData = []; 
 
-            // Сортируем слова для размещения по убыванию длины
             const wordsToPlaceThisTurn = [...CURRENT_QUIZ_QA_LIST].sort((a, b) => b.answer.length - a.answer.length);
 
             wordsToPlaceThisTurn.forEach(qaItem => {
                 const word = qaItem.answer;
-                if (word.length > GRID_ROWS && word.length > GRID_COLS) {
-                    console.error(`Word "${word}" is too long for the current grid (${GRID_ROWS}x${GRID_COLS}). Skipping.`);
-                    return; // Пропускаем слово, если оно не может поместиться даже по диагонали (хотя диагоналей нет)
+                if (word.length > GRID_COLS && word.length > GRID_ROWS) {
+                     console.warn(`Word "${word}" (len ${word.length}) might be too long for grid ${GRID_ROWS}x${GRID_COLS}. Checking H/V fit.`);
                 }
 
                 let placed = false;
@@ -404,11 +515,11 @@
                     let wordCellsCoords = [];
 
                     if (direction === 'horizontal') {
-                        if (word.length > GRID_COLS) continue; // Не поместится горизонтально
+                        if (word.length > GRID_COLS) continue; 
                         r_start = Math.floor(Math.random() * GRID_ROWS);
                         c_start = Math.floor(Math.random() * (GRID_COLS - word.length + 1));
-                    } else { // vertical
-                        if (word.length > GRID_ROWS) continue; // Не поместится вертикально
+                    } else { 
+                        if (word.length > GRID_ROWS) continue; 
                         r_start = Math.floor(Math.random() * (GRID_ROWS - word.length + 1));
                         c_start = Math.floor(Math.random() * GRID_COLS);
                     }
@@ -432,19 +543,16 @@
                             wordCellsCoords.push({ r: curR, c: curC });
                         }
                         
-                        // qaItem уже содержит id, question, answer, originalAnswer, found (false)
-                        // Мы добавляем/обновляем 'cells' и 'direction'
-                        const placedWordEntry = {...qaItem, cells: wordCellsCoords, direction: direction};
+                        const placedWordEntry = {...qaItem, cells: wordCellsCoords, direction: direction, found: false};
                         placedWordsData.push(placedWordEntry);
                         placed = true;
                     }
                 }
                 if (!placed) {
-                    console.warn(`Could not place word: ${word} after ${MAX_PLACEMENT_ATTEMPTS_PER_WORD} attempts.`);
+                    console.warn(`Could not place word: "${word}" (len ${word.length}) after ${MAX_PLACEMENT_ATTEMPTS_PER_WORD} attempts on ${GRID_ROWS}x${GRID_COLS} grid.`);
                 }
             });
 
-            // Заполняем оставшиеся пустые ячейки случайными буквами
             for (let r_fill = 0; r_fill < GRID_ROWS; r_fill++) {
                 for (let c_fill = 0; c_fill < GRID_COLS; c_fill++) {
                     if (grid[r_fill][c_fill] === null) {
@@ -456,14 +564,17 @@
 
         function renderGrid() {
             const gridTable = document.getElementById('letter-grid');
-            gridTable.innerHTML = ''; // Очищаем предыдущую сетку
-            // Адаптация размера ячеек, если сетка большая
-            let cellSize = 30;
-            if (GRID_COLS > 15 || GRID_ROWS > 15) {
-                cellSize = 25;
+            gridTable.innerHTML = ''; 
+            let baseCellSize = 30; // Базовый размер для 10x10 или меньше
+
+            // Если сетка больше 10, немного уменьшаем ячейки,
+            // но не слишком сильно, чтобы текст оставался читаемым.
+            // Адаптивный calc в CSS @media query для мобильных будет иметь приоритет там.
+            if (GRID_COLS > 10) {
+                baseCellSize = 28;
             }
-            if (GRID_COLS > 20 || GRID_ROWS > 20) {
-                cellSize = 22;
+             if (GRID_COLS > 12) { // Максимум 12 у нас, но на всякий случай
+                baseCellSize = 26;
             }
 
 
@@ -474,9 +585,10 @@
                     td.textContent = grid[r_render][c_render];
                     td.dataset.r = r_render;
                     td.dataset.c = c_render;
-                    td.style.width = `${cellSize}px`;
-                    td.style.height = `${cellSize}px`;
-                    td.style.fontSize = `${Math.max(10, cellSize - 10)}px`; // Адаптивный размер шрифта
+                    // Применяем базовый размер на десктопе. На мобильных будет CSS calc.
+                    td.style.width = `${baseCellSize}px`;
+                    td.style.height = `${baseCellSize}px`;
+                    td.style.fontSize = `${Math.max(10, baseCellSize - 12)}px`; 
                     td.addEventListener('click', handleCellClick);
                     tr.appendChild(td);
                 }
@@ -488,37 +600,42 @@
             const questionsUl = document.getElementById('questions-list');
             questionsUl.innerHTML = '';
             
-            // Отображаем вопросы из CURRENT_QUIZ_QA_LIST, но состояние found берем из placedWordsData
-            // (так как не все слова из CURRENT_QUIZ_QA_LIST могли быть размещены,
-            // хотя в идеале должны быть все 5)
             const placedAnswersMap = new Map(placedWordsData.map(pwd => [pwd.answer, pwd]));
-
             let questionNumber = 1;
+
             CURRENT_QUIZ_QA_LIST.forEach(quizQaItem => {
                 const li = document.createElement('li');
                 li.textContent = `${questionNumber}. ${quizQaItem.question}`;
-                li.id = quizQaItem.id; // Используем ID из CURRENT_QUIZ_QA_LIST
+                li.id = quizQaItem.id;
 
-                // Проверяем, было ли это слово размещено и найдено
                 const placedVersion = placedAnswersMap.get(quizQaItem.answer);
                 if (placedVersion && placedVersion.found) {
                     li.classList.add('question-found');
-                } else if (!placedVersion) {
-                    // Слово не было размещено, можно его как-то пометить (например, серым цветом)
-                    // или просто не добавлять, но тогда нарушится условие "5 вопросов"
-                    // li.style.color = "lightgray"; 
-                    // li.title = "Это слово не удалось разместить на сетке";
-                    // Пока просто отображаем, как будто оно есть
+                } else if (CURRENT_QUIZ_QA_LIST.length > 0 && !placedVersion) { 
+                     li.classList.add('not-placed');
+                     li.title = "Ответ на этот вопрос не удалось разместить на сетке.";
                 }
                 questionsUl.appendChild(li);
                 questionNumber++;
             });
+
+            if (CURRENT_QUIZ_QA_LIST.length > 0 && placedWordsData.length === 0 && questionsUl.children.length > 0) {
+                 const firstLi = questionsUl.firstChild;
+                 if (firstLi) {
+                    const errorLi = document.createElement('li');
+                    errorLi.textContent = "К сожалению, не удалось разместить слова для этой игры. Попробуйте начать заново.";
+                    errorLi.style.color = "orange";
+                    questionsUl.insertBefore(errorLi, firstLi);
+                 }
+            } else if (CURRENT_QUIZ_QA_LIST.length === 0) {
+                 questionsUl.innerHTML = "<li>Нет вопросов для отображения.</li>";
+            }
         }
         
         function handleCellClick(event) {
             const clickedTd = event.target;
-            // Если игра окончена, не обрабатываем клики
-            if (document.getElementById('win-message').style.display === 'block') {
+            if (document.getElementById('win-message').style.display === 'block' || 
+               (CURRENT_QUIZ_QA_LIST.length > 0 && placedWordsData.length === 0) ) {
                 return;
             }
 
@@ -541,13 +658,8 @@
             const result = [];
             const temp = [];
             function findSubsetsRecursive(start) {
-                if (temp.length === size) {
-                    result.push([...temp]);
-                    return;
-                }
-                if (start === array.length) {
-                    return;
-                }
+                if (temp.length === size) { result.push([...temp]); return; }
+                if (start === array.length) { return; }
                 temp.push(array[start]);
                 findSubsetsRecursive(start + 1);
                 temp.pop();
@@ -558,17 +670,15 @@
         }
 
         function checkSelectedWord() {
-            if (selectedCells.length === 0) return;
+            if (selectedCells.length === 0 || placedWordsData.length === 0) return;
             
-            for (const wordData of placedWordsData) { // Итерируем только по реально размещенным словам
+            for (const wordData of placedWordsData) {
                 if (wordData.found) continue;
 
                 const targetWordString = wordData.answer;
                 const targetWordCellsOnGrid = wordData.cells; 
 
-                if (selectedCells.length < targetWordString.length) {
-                    continue;
-                }
+                if (selectedCells.length < targetWordString.length) continue;
 
                 const potentialSubsets = getSubsets(selectedCells, targetWordString.length);
 
@@ -583,14 +693,11 @@
                             const matchingCellInSubset = subset.find(subCell => subCell.r === targetGridCell.r && subCell.c === targetGridCell.c);
                             if (matchingCellInSubset) {
                                 formedWordFromSubset += matchingCellInSubset.letter;
-                            } else {
-                                lettersAreCorrect = false; 
-                                break;
-                            }
+                            } else { lettersAreCorrect = false; break; }
                         }
                         
                         if (lettersAreCorrect && (formedWordFromSubset === targetWordString || formedWordFromSubset.split('').reverse().join('') === targetWordString)) {
-                            wordData.found = true; // Помечаем found у элемента в placedWordsData
+                            wordData.found = true; 
 
                             subset.forEach(cellObj => {
                                 cellObj.td.classList.remove('selected');
@@ -603,12 +710,12 @@
                                 }
                             });
                             
-                            const questionLi = document.getElementById(wordData.id); // ID из wordData (который пришел из CURRENT_QUIZ_QA_LIST)
+                            const questionLi = document.getElementById(wordData.id);
                             if (questionLi) {
+                                questionLi.classList.remove('not-placed'); 
                                 questionLi.classList.add('question-found');
-                            } else {
-                                console.warn("Could not find question LI for ID:", wordData.id, "Word:", wordData.originalAnswer);
-                            }
+                                questionLi.title = ""; 
+                            } else { console.warn("Could not find LI for ID:", wordData.id); }
                             
                             selectedCells = []; 
                             checkWinCondition();
@@ -620,16 +727,14 @@
         }
         
         function checkWinCondition() {
-            // Проверяем, все ли слова из placedWordsData найдены.
-            // Если какое-то слово из CURRENT_QUIZ_QA_LIST не было размещено, оно не повлияет на победу.
-            // Победа наступает, когда все УСПЕШНО РАЗМЕЩЕННЫЕ слова найдены.
+            if (placedWordsData.length === 0 && CURRENT_QUIZ_QA_LIST.length > 0) { 
+                return;
+            }
             const allPlacedWordsFound = placedWordsData.length > 0 && placedWordsData.every(word => word.found);
             
             if (allPlacedWordsFound) {
                 const winMessageDiv = document.getElementById('win-message');
                 winMessageDiv.style.display = 'block';
-                // Можно заблокировать дальнейшие клики, добавив класс на grid-container или через JS
-                // Но handleCellClick уже проверяет это.
             }
         }
 
