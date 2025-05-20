@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поиск слов: Информационная Безопасность PHD2025</title>
+    <title>Поиск слов: Основы Информационной Безопасности</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -39,18 +39,22 @@
 
         #grid-container {
             user-select: none;
+             /* Динамический размер сетки может потребовать прокрутки, если станет очень большой */
+            overflow: auto; /* Добавим на всякий случай, если сетка будет огромной */
+            max-width: 100%; /* Чтобы не вылезала за пределы game-container на мобильных */
         }
 
         #letter-grid {
             border-collapse: collapse;
+            margin: 0 auto; /* Центрирование таблицы, если она меньше grid-container */
         }
 
         #letter-grid td {
-            width: 30px;
+            width: 30px; /* Базовый размер, может адаптироваться */
             height: 30px;
             border: 1px solid #ccc;
             text-align: center;
-            font-size: 18px;
+            font-size: 16px; /* Чуть уменьшим для потенциально более плотной сетки */
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.2s ease, color 0.2s ease;
@@ -75,11 +79,9 @@
 
         #questions-container {
             max-width: 400px;
-            min-width: 300px; /* Для десктопа, чтобы не слишком сужался */
+            min-width: 300px; 
             display: flex;
             flex-direction: column;
-            /* Убираем ограничение высоты и скролл для десктопа */
-            /* max-height: calc(100vh - 150px); -- УБРАНО */
         }
         
         h2 {
@@ -95,8 +97,6 @@
             list-style-type: none;
             padding: 0;
             margin: 0;
-            /* flex-grow: 1; -- Не так актуально без ограничения высоты родителя */
-            /* overflow-y: auto; -- УБРАНО для десктопа, скроллится вся страница */
         }
 
         #questions-list li {
@@ -125,6 +125,24 @@
             color: #28a745;
             margin-top: 20px;
         }
+        #restart-button-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+        #restart-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        #restart-button:hover {
+            background-color: #0056b3;
+        }
+
 
         /* Адаптивность для мобильных устройств */
         @media (max-width: 768px) {
@@ -146,14 +164,15 @@
             }
 
             #grid-container {
-                overflow-x: auto;
-                width: 100%;
+                /* overflow-x: auto; уже есть выше, и этого достаточно */
+                width: 100%; 
             }
 
             #letter-grid td {
-                 width: 28px; 
+                 /* Если сетка 10x10, 28px может быть нормально. Если больше, то размер ячеек может понадобиться уменьшить */
+                 width: 28px; /* Динамически можно менять в JS, если сетка больше */
                  height: 28px;
-                 font-size: 15px; 
+                 font-size: 14px; 
             }
 
             #questions-container {
@@ -161,11 +180,11 @@
                 width: 100%;
                 min-width: unset;
                 margin-top: 0;
-                max-height: none; /* На мобильных список растягивается, скроллится вся страница */
+                max-height: none; 
             }
 
             #questions-list {
-                overflow-y: visible; /* Чтобы не было двойного скролла на мобильных */
+                overflow-y: visible; 
                 padding-right: 0;
                 font-size: 13px;
             }
@@ -174,14 +193,16 @@
                 font-size: 20px;
             }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 480px) { /* Для очень маленьких экранов */
             h1 {
                 font-size: 18px;
             }
              #letter-grid td {
-                 width: 25px; 
+                 /*width: 25px; 
                  height: 25px;
-                 font-size: 14px; 
+                 font-size: 12px; */
+                 /* Эти размеры могут стать слишком мелкими, если сетка 15x15. 
+                    Лучше, чтобы #grid-container просто скроллился */
             }
             #questions-list li {
                 font-size: 12px;
@@ -191,7 +212,7 @@
     </style>
 </head>
 <body>
-    <h1>Поиск слов: Основы Информационной Безопасности PHD2025</h1>
+    <h1>Поиск слов: Основы Информационной Безопасности</h1>
     
     <div id="game-container">
         <div id="grid-container">
@@ -203,79 +224,160 @@
         </div>
     </div>
 
-    <div id="win-message" style="display:none;">Поздравляем! Вы нашли все слова!</div>
+    <div id="win-message" style="display:none;">
+        Поздравляем! Вы нашли все слова!
+        <div id="restart-button-container">
+            <button id="restart-button">Играть снова</button>
+        </div>
+    </div>
 
     <script>
-        const QA_LIST_RAW = [
-            { q: "Проект отечественного квантово-устойчивого алгоритма ЭЦП для стандартизации", a: "Гиперикум" },
-            { q: "Алгоритм, стойкий к атакам квантового компьютера", a: "Постквантовый" },
-            { q: "Свойство безопасности данных, которое обеспечивает шифрование", a: "Конфиденциальность" },
-            { q: "Свойство безопасности данных, которое обеспечивает хэширование", a: "Целостность" },
-            { q: "Мошенничество через поддельные письма или сайты", a: "Фишинг" },
-            { q: "Сетевой фильтр, блокирующий опасный трафик", a: "Фаервол" },
-            { q: "Процедура проверки подлинности", a: "Аутентификация" },
-            { q: "Программа для поиска и удаления вредоносного ПО", a: "Антивирус" },
-            { q: "Подбор паролей перебором", a: "Брутфорс" },
-            { q: "Тестирование безопасности системы на проникновение", a: "Пентест" },
-            { q: "Шифровальная машина, которую взломал Алан Тьюринг", a: "Энигма" },
-            { q: "Ситуация, когда два разных текста дают одинаковый хэш", a: "Коллизия" },
-            { q: "Название нового отечественного алгоритма блочного шифрования", a: "Кузнечик" },
-        //     { q: "Название старого отечественного алгоритма блочного шифрования", a: "Магма" },
-        //     { q: "Название отечественного алгоритма функции хэширования", a: "Стрибог" },
-        //     { q: "Случайные данные, добавляемые к паролю перед хэшированием", a: "Соль" },
-        //     { q: "Метод проверки подлинности пользователя по биологическим признакам", a: "Биометрия" },
-        //     { q: "Программа, маскирующаяся под легитимное ПО", a: "Троян" },
-        //     { q: "Криптографическая функция, преобразующая данные в строку фиксированной длины", a: "Хэш" },
-        //     { q: "Метод, позволяющий проверить подлинность данных без шифрования", a: "Подпись" },
-        //     { q: "Вредоносный код, заражающий файлы", a: "Вирус" },
-        //     { q: "Физическое устройство, используемое для упрощения аутентификации", a: "Токен" },
-        //     { q: "Цепочка блоков с защищенными от изменений данными на основе хэш-функций", a: "Блокчейн" },
-        //     { q: "Секретная информация, необходимая для расшифрования или подписи", a: "Ключ" },
-        //     { q: "Массовая рассылка нежелательных сообщений", a: "Спам" },
-        //     { q: "Специалист по созданию алгоритмов шифрования", a: "Криптограф" },
-        //     { q: "Устройство или программа для шифрования данных", a: "Шифратор" },
-        //     { q: "Уникальный идентификатор пользователя в системе", a: "Логин" },
-        //     { q: "Алгоритм разложения числа на множители", a: "Факторизация" },
-        //     { q: "Секретная комбинация символов для получения доступа к различным данным", a: "Пароль" },
-        //     { q: "Область постквантовой криптографии к которой относится стандарт Kyber/ML-KEM", a: "Решетки" },
-        //     { q: "Область постквантовой криптографии к которой криптосистема Мак-Элиса", a: "Коды" },
-        //     { q: "Фамилия автора алгоритма для взлома RSA с помощью квантового компьютера", a: "Шор" },
-        //     { q: "Вид шифрования данных с сохранением свойств операций сложения и умножения для шифртекстов", a: "Гомоморфное" }
+        const SIMPLE_QA_RAW = [
+            { q: "Проект отечественного квантово-устойчивого алгоритма ЭЦП для стандартизации", a: "Гиперикум" }, // 9
+            // { q: "Алгоритм, стойкий к атакам квантового компьютера", a: "Постквантовый" }, // 13
+            // { q: "Свойство безопасности данных, которое обеспечивает шифрование", a: "Конфиденциальность" }, // 19
+            // { q: "Свойство безопасности данных, которое обеспечивает хэширование", a: "Целостность" }, // 11
+            { q: "Шифровальная машина, которую взломал Алан Тьюринг", a: "Энигма" }, // 6
+            { q: "Ситуация, когда два разных текста дают одинаковый хэш", a: "Коллизия" }, // 8
+            { q: "Название нового отечественного алгоритма блочного шифрования", a: "Кузнечик" }, // 8
+            { q: "Название старого отечественного алгоритма блочного шифрования", a: "Магма" },   // 5
+            { q: "Название отечественного алгоритма функции хэширования", a: "Стрибог" }, // 7
+            { q: "Случайные данные, добавляемые к паролю перед хэшированием", a: "Соль" },    // 4
+            { q: "Метод проверки подлинности пользователя по биологическим признакам", a: "Биометрия" }, // 9
+            { q: "Метод, позволяющий проверить подлинность данных без шифрования", a: "Подпись" }, // 7
+            { q: "Физическое устройство, используемое для упрощения аутентификации", a: "Токен" },   // 5
+            { q: "Цепочка блоков с защищенными от изменений данными на основе хэш-функций", a: "Блокчейн" },// 9
+            { q: "Секретная информация, необходимая для расшифрования или подписи", a: "Ключ" },    // 4
+            { q: "Специалист по созданию алгоритмов шифрования", a: "Криптограф" },// 10
+            { q: "Устройство или программа для шифрования данных", a: "Шифратор" }, // 8
+            { q: "Секретная комбинация символов для получения доступа к различным данным", a: "Пароль" },  // 6
+            { q: "Тип ключа, позволяющий подписывать сообщения", a: "Секретный" }, // 9
+            { q: "Тип ключа, позволяющий проверять подпись сообщения", a: "Открытый" }  // 8
         ];
 
-        const QA_LIST = QA_LIST_RAW.map(item => ({
-            question: item.q,
-            answer: item.a.toUpperCase().replace(/\s+/g, ''),
-            originalAnswer: item.a,
-            id: `question-${item.a.toUpperCase().replace(/\s+/g, '').replace(/[^A-ZА-Я0-9]/ig, '')}`,
-            found: false,
-            cells: [] 
-        }));
+        const COMPLEX_QA_RAW = [
+            // { q: "Вид шифрования данных с сохранением свойств операций сложения и умножения для шифртекстов", a: "Гомоморфное" }, // 11
+            { q: "Область постквантовой криптографии к которой относится стандарт Kyber/ML-KEM", a: "Решетки" }, // 7
+            // { q: "Процедура проверки подлинности", a: "Аутентификация" }, // 15
+            { q: "Область постквантовой криптографии к которой криптосистема Мак-Элиса", a: "Коды" }, // 4
+            // { q: "Алгоритм разложения числа на множители", a: "Факторизация" }, // 12
+            { q: "Фамилия автора алгоритма для взлома RSA с помощью квантового компьютера", a: "Шор" }, // 3
+            { q: "Квантовый алгоритм, дающий квадратичное ускорение атаки перебором", a: "Гровер" }, // 6
+            { q: "Криптографическая функция, преобразующая данные в строку фиксированной длины", a: "Хэш" } // 3
+        ];
 
-        const GRID_ROWS = 25; 
-        const GRID_COLS = 25;
-        const MAX_PLACEMENT_ATTEMPTS = 100;
+        const NUM_SIMPLE_QUESTIONS = 4;
+        const NUM_COMPLEX_QUESTIONS = 1;
+        const BASE_GRID_DIMENSION = 10; // Минимальный размер сетки 10x10
+        const MAX_PLACEMENT_ATTEMPTS_PER_WORD = 200; // Увеличим, т.к. сетка может быть плотнее
+
+        let CURRENT_QUIZ_QA_LIST = []; // Вопросы для текущей игры
+        let GRID_ROWS = BASE_GRID_DIMENSION;
+        let GRID_COLS = BASE_GRID_DIMENSION;
 
         let grid = []; 
         let selectedCells = []; 
-        let placedWordsData = []; 
+        let placedWordsData = []; // Это будет подмножество CURRENT_QUIZ_QA_LIST, которое удалось разместить
 
         const alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 
+        // Функция для перемешивания массива (Fisher-Yates shuffle)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function selectQuizQuestions() {
+            shuffleArray(SIMPLE_QA_RAW);
+            shuffleArray(COMPLEX_QA_RAW);
+
+            const selectedSimple = SIMPLE_QA_RAW.slice(0, NUM_SIMPLE_QUESTIONS);
+            const selectedComplex = COMPLEX_QA_RAW.slice(0, NUM_COMPLEX_QUESTIONS);
+            
+            CURRENT_QUIZ_QA_LIST = [...selectedSimple, ...selectedComplex].map((item, index) => ({
+                question: item.q,
+                answer: item.a.toUpperCase().replace(/\s+/g, ''),
+                originalAnswer: item.a,
+                id: `question-${index}-${item.a.toUpperCase().replace(/\s+/g, '').replace(/[^A-ZА-Я0-9]/ig, '')}`, // Добавим индекс для уникальности ID
+                found: false,
+                cells: [] 
+            }));
+            shuffleArray(CURRENT_QUIZ_QA_LIST); // Перемешаем итоговый список для случайного порядка в UI
+            console.log("Selected questions for this quiz:", CURRENT_QUIZ_QA_LIST.map(q => q.originalAnswer));
+        }
+
+        function determineGridSize() {
+            let maxLength = 0;
+            CURRENT_QUIZ_QA_LIST.forEach(qa => {
+                if (qa.answer.length > maxLength) {
+                    maxLength = qa.answer.length;
+                }
+            });
+
+            // Даем небольшой запас, чтобы слова не были впритык к краям, и было место для других.
+            // +2 или +3 к максимальной длине слова.
+            // И чтобы было место для 5 слов, даже если они все короткие.
+            // Пытаемся сохранить примерно квадратную форму.
+            const totalLetters = CURRENT_QUIZ_QA_LIST.reduce((sum, qa) => sum + qa.answer.length, 0);
+            const estimatedMinArea = totalLetters * 2; // Примерная площадь с учетом "мусора"
+            
+            let dimension = Math.max(BASE_GRID_DIMENSION, maxLength + 1); // +1 чтобы слово не было впритык
+            
+            // Убедимся, что площадь сетки достаточна для размещения
+            // (очень грубая оценка, т.к. размещение сложное)
+            while (dimension * dimension < estimatedMinArea && dimension < 30) { // Ограничим максимальный размер сетки
+                dimension++;
+            }
+            // Если самое длинное слово очень большое, оно определяет размер
+            dimension = Math.max(dimension, maxLength + 1);
+
+
+            GRID_ROWS = dimension;
+            GRID_COLS = dimension;
+            console.log(`Determined grid size: ${GRID_ROWS}x${GRID_COLS} (maxLengthWord: ${maxLength})`);
+        }
+        
+        function resetGame() {
+            selectedCells = [];
+            placedWordsData = [];
+            CURRENT_QUIZ_QA_LIST = [];
+            document.getElementById('win-message').style.display = 'none';
+            // Удаляем старые обработчики, если они были (на всякий случай, хотя renderGrid их пересоздает)
+            const oldGridCells = document.querySelectorAll('#letter-grid td');
+            oldGridCells.forEach(td => {
+                const newTd = td.cloneNode(true); // Клонируем без обработчиков
+                td.parentNode.replaceChild(newTd, td);
+            });
+            initGame();
+        }
+
+
         function initGame() {
-            console.log("Initializing game...");
+            console.log("Initializing new game...");
+            selectQuizQuestions();
+            if (CURRENT_QUIZ_QA_LIST.length === 0) {
+                alert("Ошибка: не удалось выбрать вопросы для игры.");
+                return;
+            }
+            determineGridSize();
+            
             prepareGridData();
             renderGrid();
             renderQuestions();
-            console.log("Game initialized. Placed words:", placedWordsData.length, "/", QA_LIST.length);
-            if (placedWordsData.length < QA_LIST.length) {
-                 console.warn(`Could only place ${placedWordsData.length} out of ${QA_LIST.length} words. Consider increasing grid size or placement attempts.`);
+
+            if (placedWordsData.length < CURRENT_QUIZ_QA_LIST.length) {
+                 console.warn(`Could only place ${placedWordsData.length} out of ${CURRENT_QUIZ_QA_LIST.length} selected words. Grid might be too small or placement too difficult.`);
+                 // Можно добавить сообщение пользователю, если не все слова размещены, но это усложнит игру.
+                 // Для теста из 5 слов это должно быть редкой ситуацией при адекватном размере сетки.
             }
-            if (placedWordsData.length === 0 && QA_LIST.length > 0) {
-                 console.error("CRITICAL: No words were placed. Check grid size or placement logic.");
-                 alert("Ошибка: не удалось разместить слова на сетке. Пожалуйста, проверьте консоль для деталей или увеличьте размер сетки в коде (GRID_ROWS, GRID_COLS).");
+            if (placedWordsData.length === 0 && CURRENT_QUIZ_QA_LIST.length > 0) {
+                 console.error("CRITICAL: No words were placed from the selected quiz words.");
+                 alert("Критическая ошибка: не удалось разместить ни одного слова на сетке. Попробуйте перезапустить игру.");
             }
         }
+
 
         function getRandomLetter() {
             return alphabet[Math.floor(Math.random() * alphabet.length)];
@@ -283,22 +385,30 @@
 
         function prepareGridData() {
             grid = Array(GRID_ROWS).fill(null).map(() => Array(GRID_COLS).fill(null));
-            placedWordsData = [];
+            placedWordsData = []; // Сбрасываем перед каждой попыткой генерации
 
-            const wordsToPlace = [...QA_LIST].sort((a, b) => b.answer.length - a.answer.length);
+            // Сортируем слова для размещения по убыванию длины
+            const wordsToPlaceThisTurn = [...CURRENT_QUIZ_QA_LIST].sort((a, b) => b.answer.length - a.answer.length);
 
-            wordsToPlace.forEach(qaItem => {
+            wordsToPlaceThisTurn.forEach(qaItem => {
                 const word = qaItem.answer;
+                if (word.length > GRID_ROWS && word.length > GRID_COLS) {
+                    console.error(`Word "${word}" is too long for the current grid (${GRID_ROWS}x${GRID_COLS}). Skipping.`);
+                    return; // Пропускаем слово, если оно не может поместиться даже по диагонали (хотя диагоналей нет)
+                }
+
                 let placed = false;
-                for (let attempt = 0; attempt < MAX_PLACEMENT_ATTEMPTS && !placed; attempt++) {
+                for (let attempt = 0; attempt < MAX_PLACEMENT_ATTEMPTS_PER_WORD && !placed; attempt++) {
                     const direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
-                    let r_start, c_start; // r, c - зарезервированы в selectedCells, лучше использовать другие имена
+                    let r_start, c_start;
                     let wordCellsCoords = [];
 
                     if (direction === 'horizontal') {
+                        if (word.length > GRID_COLS) continue; // Не поместится горизонтально
                         r_start = Math.floor(Math.random() * GRID_ROWS);
                         c_start = Math.floor(Math.random() * (GRID_COLS - word.length + 1));
-                    } else {
+                    } else { // vertical
+                        if (word.length > GRID_ROWS) continue; // Не поместится вертикально
                         r_start = Math.floor(Math.random() * (GRID_ROWS - word.length + 1));
                         c_start = Math.floor(Math.random() * GRID_COLS);
                     }
@@ -322,21 +432,19 @@
                             wordCellsCoords.push({ r: curR, c: curC });
                         }
                         
+                        // qaItem уже содержит id, question, answer, originalAnswer, found (false)
+                        // Мы добавляем/обновляем 'cells' и 'direction'
                         const placedWordEntry = {...qaItem, cells: wordCellsCoords, direction: direction};
                         placedWordsData.push(placedWordEntry);
-
-                        const originalQaItem = QA_LIST.find(item => item.answer === qaItem.answer);
-                        if (originalQaItem) {
-                            originalQaItem.cells = wordCellsCoords; // Обновляем и в исходном списке для консистентности
-                        }
                         placed = true;
                     }
                 }
                 if (!placed) {
-                    console.warn(`Could not place word: ${word}`);
+                    console.warn(`Could not place word: ${word} after ${MAX_PLACEMENT_ATTEMPTS_PER_WORD} attempts.`);
                 }
             });
 
+            // Заполняем оставшиеся пустые ячейки случайными буквами
             for (let r_fill = 0; r_fill < GRID_ROWS; r_fill++) {
                 for (let c_fill = 0; c_fill < GRID_COLS; c_fill++) {
                     if (grid[r_fill][c_fill] === null) {
@@ -348,7 +456,17 @@
 
         function renderGrid() {
             const gridTable = document.getElementById('letter-grid');
-            gridTable.innerHTML = '';
+            gridTable.innerHTML = ''; // Очищаем предыдущую сетку
+            // Адаптация размера ячеек, если сетка большая
+            let cellSize = 30;
+            if (GRID_COLS > 15 || GRID_ROWS > 15) {
+                cellSize = 25;
+            }
+            if (GRID_COLS > 20 || GRID_ROWS > 20) {
+                cellSize = 22;
+            }
+
+
             for (let r_render = 0; r_render < GRID_ROWS; r_render++) {
                 const tr = document.createElement('tr');
                 for (let c_render = 0; c_render < GRID_COLS; c_render++) {
@@ -356,6 +474,9 @@
                     td.textContent = grid[r_render][c_render];
                     td.dataset.r = r_render;
                     td.dataset.c = c_render;
+                    td.style.width = `${cellSize}px`;
+                    td.style.height = `${cellSize}px`;
+                    td.style.fontSize = `${Math.max(10, cellSize - 10)}px`; // Адаптивный размер шрифта
                     td.addEventListener('click', handleCellClick);
                     tr.appendChild(td);
                 }
@@ -366,25 +487,41 @@
         function renderQuestions() {
             const questionsUl = document.getElementById('questions-list');
             questionsUl.innerHTML = '';
-            const placedMap = new Map(placedWordsData.map(pwd => [pwd.answer, pwd]));
+            
+            // Отображаем вопросы из CURRENT_QUIZ_QA_LIST, но состояние found берем из placedWordsData
+            // (так как не все слова из CURRENT_QUIZ_QA_LIST могли быть размещены,
+            // хотя в идеале должны быть все 5)
+            const placedAnswersMap = new Map(placedWordsData.map(pwd => [pwd.answer, pwd]));
+
             let questionNumber = 1;
-            QA_LIST.forEach(originalQaItem => {
-                if (placedMap.has(originalQaItem.answer)) {
-                    const wordData = placedMap.get(originalQaItem.answer);
-                    const li = document.createElement('li');
-                    li.textContent = `${questionNumber}. ${wordData.question}`;
-                    li.id = wordData.id;
-                    if (wordData.found) {
-                        li.classList.add('question-found');
-                    }
-                    questionsUl.appendChild(li);
-                    questionNumber++;
+            CURRENT_QUIZ_QA_LIST.forEach(quizQaItem => {
+                const li = document.createElement('li');
+                li.textContent = `${questionNumber}. ${quizQaItem.question}`;
+                li.id = quizQaItem.id; // Используем ID из CURRENT_QUIZ_QA_LIST
+
+                // Проверяем, было ли это слово размещено и найдено
+                const placedVersion = placedAnswersMap.get(quizQaItem.answer);
+                if (placedVersion && placedVersion.found) {
+                    li.classList.add('question-found');
+                } else if (!placedVersion) {
+                    // Слово не было размещено, можно его как-то пометить (например, серым цветом)
+                    // или просто не добавлять, но тогда нарушится условие "5 вопросов"
+                    // li.style.color = "lightgray"; 
+                    // li.title = "Это слово не удалось разместить на сетке";
+                    // Пока просто отображаем, как будто оно есть
                 }
+                questionsUl.appendChild(li);
+                questionNumber++;
             });
         }
         
         function handleCellClick(event) {
             const clickedTd = event.target;
+            // Если игра окончена, не обрабатываем клики
+            if (document.getElementById('win-message').style.display === 'block') {
+                return;
+            }
+
             const r_click = parseInt(clickedTd.dataset.r);
             const c_click = parseInt(clickedTd.dataset.c);
 
@@ -400,11 +537,10 @@
             checkSelectedWord();
         }
 
-        // Вспомогательная функция для получения всех подмножеств заданного размера
         function getSubsets(array, size) {
             const result = [];
             const temp = [];
-            function findSubsets(start) {
+            function findSubsetsRecursive(start) {
                 if (temp.length === size) {
                     result.push([...temp]);
                     return;
@@ -412,116 +548,95 @@
                 if (start === array.length) {
                     return;
                 }
-                // Включаем текущий элемент
                 temp.push(array[start]);
-                findSubsets(start + 1);
-                // Исключаем текущий элемент (бэктрекинг)
+                findSubsetsRecursive(start + 1);
                 temp.pop();
-                findSubsets(start + 1);
+                findSubsetsRecursive(start + 1);
             }
-            findSubsets(0);
+            findSubsetsRecursive(0);
             return result;
         }
 
-
-        // --- ОБНОВЛЕННАЯ ЛОГИКА `checkSelectedWord` ---
         function checkSelectedWord() {
             if (selectedCells.length === 0) return;
-
-            // Сортируем слова для проверки от самых длинных из возможных в selectedCells к коротким.
-            // Это может помочь найти более длинное слово раньше, если оно полностью выбрано.
-            // (Но основной перебор идет по placedWordsData)
             
-            for (const wordData of placedWordsData) {
+            for (const wordData of placedWordsData) { // Итерируем только по реально размещенным словам
                 if (wordData.found) continue;
 
                 const targetWordString = wordData.answer;
-                const targetWordCellsOnGrid = wordData.cells; // [{r,c}, ...]
+                const targetWordCellsOnGrid = wordData.cells; 
 
-                // Если выбранных ячеек меньше, чем букв в слове, его точно не найти
                 if (selectedCells.length < targetWordString.length) {
                     continue;
                 }
 
-                // Получаем все подмножества selectedCells, размер которых равен длине targetWordString
                 const potentialSubsets = getSubsets(selectedCells, targetWordString.length);
 
                 for (const subset of potentialSubsets) {
-                    // subset - это массив из {td, r, c, letter}
-                    
-                    // 1. Проверка по координатам (каноническое представление)
-                    const subsetCoordsCanonical = subset
-                        .map(sc => `${sc.r},${sc.c}`)
-                        .sort()
-                        .join(';');
-                    
-                    const targetWordCellsCanonical = targetWordCellsOnGrid
-                        .map(tc => `${tc.r},${tc.c}`)
-                        .sort()
-                        .join(';');
+                    const subsetCoordsCanonical = subset.map(sc => `${sc.r},${sc.c}`).sort().join(';');
+                    const targetWordCellsCanonical = targetWordCellsOnGrid.map(tc => `${tc.r},${tc.c}`).sort().join(';');
 
                     if (subsetCoordsCanonical === targetWordCellsCanonical) {
-                        // Наборы координат совпадают! Это значит, что ячейки из `subset`
-                        // - это те же самые ячейки, что и `targetWordCellsOnGrid`.
-
-                        // 2. Проверка букв (чтобы убедиться, что они образуют слово)
-                        // Собираем слово из `subset`, используя порядок `targetWordCellsOnGrid`
                         let formedWordFromSubset = "";
                         let lettersAreCorrect = true;
-                        for (const targetGridCell of targetWordCellsOnGrid) { // Идем по ячейкам слова в правильном порядке
+                        for (const targetGridCell of targetWordCellsOnGrid) {
                             const matchingCellInSubset = subset.find(subCell => subCell.r === targetGridCell.r && subCell.c === targetGridCell.c);
                             if (matchingCellInSubset) {
                                 formedWordFromSubset += matchingCellInSubset.letter;
                             } else {
-                                // Этого не должно случиться, если канонические представления координат совпали
                                 lettersAreCorrect = false; 
                                 break;
                             }
                         }
                         
                         if (lettersAreCorrect && (formedWordFromSubset === targetWordString || formedWordFromSubset.split('').reverse().join('') === targetWordString)) {
-                            // Слово найдено!
-                            wordData.found = true;
+                            wordData.found = true; // Помечаем found у элемента в placedWordsData
 
-                            // Помечаем ячейки найденного слова (из subset) как 'found'
                             subset.forEach(cellObj => {
                                 cellObj.td.classList.remove('selected');
                                 cellObj.td.classList.add('found');
                             });
 
-                            // Снимаем выделение 'selected' с "лишних" ячеек,
-                            // которые были в selectedCells, но не вошли в найденный subset.
                             selectedCells.forEach(originalCellObj => {
                                 if (!subset.some(subCell => subCell.td === originalCellObj.td)) {
                                     originalCellObj.td.classList.remove('selected');
                                 }
                             });
                             
-                            const questionLi = document.getElementById(wordData.id);
+                            const questionLi = document.getElementById(wordData.id); // ID из wordData (который пришел из CURRENT_QUIZ_QA_LIST)
                             if (questionLi) {
                                 questionLi.classList.add('question-found');
+                            } else {
+                                console.warn("Could not find question LI for ID:", wordData.id, "Word:", wordData.originalAnswer);
                             }
                             
-                            selectedCells = []; // Полностью очищаем текущий выбор пользователя
+                            selectedCells = []; 
                             checkWinCondition();
-                            return; // Слово найдено и обработано
+                            return; 
                         }
                     }
-                } // конец цикла по подмножествам
-            } // конец цикла по wordData
+                } 
+            } 
         }
         
         function checkWinCondition() {
-            const allFound = placedWordsData.length > 0 && placedWordsData.every(word => word.found);
-            if (allFound) {
+            // Проверяем, все ли слова из placedWordsData найдены.
+            // Если какое-то слово из CURRENT_QUIZ_QA_LIST не было размещено, оно не повлияет на победу.
+            // Победа наступает, когда все УСПЕШНО РАЗМЕЩЕННЫЕ слова найдены.
+            const allPlacedWordsFound = placedWordsData.length > 0 && placedWordsData.every(word => word.found);
+            
+            if (allPlacedWordsFound) {
                 const winMessageDiv = document.getElementById('win-message');
                 winMessageDiv.style.display = 'block';
-                const gridCells = document.querySelectorAll('#letter-grid td');
-                gridCells.forEach(td => td.removeEventListener('click', handleCellClick));
+                // Можно заблокировать дальнейшие клики, добавив класс на grid-container или через JS
+                // Но handleCellClick уже проверяет это.
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initGame);
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+            document.getElementById('restart-button').addEventListener('click', resetGame);
+        });
 
     </script>
 </body>
