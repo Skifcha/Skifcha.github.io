@@ -22,8 +22,7 @@
         .header-container {
             text-align: center;
             margin-top: 35px;
-            /* margin-bottom для отступа до сетки теперь у subtitle */
-            padding: 0 20px; 
+            padding: 0 30px; 
         }
 
         .logo {
@@ -40,7 +39,7 @@
             letter-spacing: 0%;
             text-align: center;
             color: white;
-            margin-top: 0; /* Убрал верхний, чтобы логотип был главным по отступу */
+            margin-top: 0;
             margin-bottom: 15px; 
         }
 
@@ -53,30 +52,24 @@
             text-align: center;
             color: white;
             max-width: 600px; 
-            margin: 0 auto 26px auto; /* Отступ вниз 26px до game-container (сетки) */
+            margin: 0 auto 26px auto; 
         }
 
-        /* #game-container теперь только для компоновки */
         #game-container {
             display: flex;
-            /* gap убран, будем управлять отступами между grid и questions через margin/padding или gap конкретных flex-детей */
-            flex-wrap: wrap; /* Позволит переноситься на очень узких экранах до медиа-запроса */
+            flex-wrap: wrap; 
             width: auto;
             max-width: calc(100% - 40px); 
-            align-items: flex-start; /* Важно для вертикального выравнивания, если элементы разной высоты */
-            justify-content: center; /* Центрируем контент, если он не занимает всю ширину */
+            align-items: flex-start; 
+            justify-content: center; 
             margin-bottom: 30px; 
-            /* Убраны: background-color, padding, border-radius, box-shadow */
         }
 
         #grid-container {
             user-select: none;
             overflow: auto; 
-            /* max-width: 100%; -- не нужно, т.к. #game-container уже ограничивает */
-            margin-right: 20px; /* Отступ от сетки до списка вопросов на десктопе */
+            margin-right: 20px; 
         }
-        /* Если на мобильных они в столбик, этот margin-right не нужен, нужен margin-bottom */
-
 
         #letter-grid {
             border-collapse: collapse;
@@ -113,13 +106,10 @@
         }
 
         #questions-container {
-            max-width: 400px; /* Ограничение ширины списка вопросов */
+            max-width: 400px; 
             min-width: 300px; 
             display: flex;
             flex-direction: column;
-            /* background-color: rgba(0,0,0,0.1); /* Легкий фон для блока вопросов, чтобы визуально отделить */
-            /* padding: 15px; */
-            /* border-radius: 8px; */
         }
         
         #questions-container h2 { 
@@ -140,13 +130,13 @@
         }
 
         #questions-list li {
-            padding: 10px 5px; 
-            border-bottom: 1px solid rgba(255,255,255,0.2); 
+            padding: 10px 0px; 
+/*            border-bottom: 1px solid rgba(255,255,255,0.2); */
             font-family: 'Onest', sans-serif;
             font-weight: 500;
             font-size: 18px;
             line-height: 120%;
-            text-indent: 10px;
+/*            text-indent: 10px;*/
             letter-spacing: 0%;
             color: white; 
             transition: color 0.3s ease, background-color 0.3s ease;
@@ -201,7 +191,7 @@
             width: 100%;
             max-width: 800px; 
             margin: 0px auto 20px auto;
-            padding: 15px 20px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -209,53 +199,73 @@
             box-sizing: border-box;
         }
 
-        .footer-link, .footer-tg {
+        .footer-link { /* Стили для левой ссылки остаются прежними */
             font-family: 'Onest', sans-serif;
             font-weight: 400;
             font-size: 16px;
             line-height: 110%;
             letter-spacing: 0%;
-            color: white;
         }
-        .footer-link a, .footer-tg a {
+        .footer-link a {
             color: white;
             text-decoration: underline;
             text-decoration-style: solid;
             text-underline-offset: 3px; 
         }
-         .footer-tg .tg-prefix {
-            text-decoration: none; 
+        
+        .footer-tg { /* Общий контейнер для правой части, если нужны будут общие стили */
+             font-family: 'Onest', sans-serif;
+             font-weight: 400;
+             font-size: 16px;
+             line-height: 110%;
+             letter-spacing: 0%;
         }
+        .footer-tg-link { /* Ссылка, содержащая иконку и текст */
+            display: flex; 
+            align-items: center; 
+            color: white; 
+            text-decoration: none; /* Убираем подчеркивание с контейнера ссылки */
+        }
+        .footer-tg-link span { /* Текстовая часть ссылки */
+            text-decoration: underline; /* Подчеркиваем только текст */
+            text-decoration-style: solid;
+            text-underline-offset: 3px; 
+        }
+        .tg-icon {
+            width: 18px;
+            height: 18px;
+            margin-right: 4px; 
+            vertical-align: middle; 
+        }
+
 
         /* Адаптивность */
         @media (max-width: 768px) {
             body { padding: 0; }
-            .header-container { margin-top: 25px; margin-bottom: 0; } /* Убрали нижний отступ, т.к. он у .subtitle */
+            .header-container { margin-top: 25px; margin-bottom: 0; }
 
             #game-container { 
                 flex-direction: column; 
                 align-items: center; 
-                gap: 20px; /* Теперь gap здесь для отступа между сеткой и вопросами, когда они в столбик */
-                padding: 0 10px; /* Уменьшаем боковые отступы для контейнера игры */
+                gap: 20px; 
+                padding: 0 30px; 
                 max-width: 100%;
                 margin-left: 0;
                 margin-right: 0;
                 box-sizing: border-box;
             }
             #grid-container { 
-                width: 100%; /* Чтобы сетка занимала доступную ширину и скроллилась если надо */
-                margin-right: 0; /* Убираем правый отступ на мобильных */
-                /* margin-bottom: 20px; -- теперь через gap у родителя */
+                width: 100%; 
+                margin-right: 0; 
             }
-            /* #letter-grid td стили шрифта/цвета остаются, размер ячейки можно оставить 28px или сделать адаптивным */
              #letter-grid td { 
-                 width: calc((100vw - 40px - (var(--grid-cols, 10) - 1) * 1px) / var(--grid-cols, 10) ); /* Попытка адаптивного размера ячейки */
+                 width: calc((100vw - 40px - (var(--grid-cols, 10) - 1) * 1px) / var(--grid-cols, 10) ); 
                  height: calc((100vw - 40px - (var(--grid-cols, 10) - 1) * 1px) / var(--grid-cols, 10) );
-                 max-width: 35px; /* Ограничение максимального размера ячейки */
+                 max-width: 35px; 
                  max-height: 35px;
-                 min-width: 24px; /* Ограничение минимального размера ячейки */
+                 min-width: 24px; 
                  min-height: 24px;
-                 font-size: 14px; /* Шрифт ячеек остается */
+                 font-size: 14px; 
             }
 
 
@@ -263,10 +273,10 @@
                 max-width: 100%; 
                 width: 100%; 
                 min-width: unset; 
-                margin-top: 0; /* Отступ управляется gap у #game-container */
+                margin-top: 0; 
             }
             
-            #win-message { font-size: 20px; } /* Стили шрифта остаются */
+            #win-message { font-size: 20px; }
         }
     </style>
 </head>
@@ -298,8 +308,11 @@
         <div class="footer-link">
             <a href="https://qapp.tech/" target="_blank">qapp.tech</a>
         </div>
-        <div class="footer-tg">
-            <span class="tg-prefix">tg:</span> <a href="https://t.me/qapptech" target="_blank">@qapptech</a>
+        <div class="footer-tg"> <!-- Общий контейнер для правой части -->
+            <a href="https://t.me/qapptech" target="_blank" class="footer-tg-link"> <!-- Ссылка-контейнер -->
+                <img src="https://ai-pets-avatars.s3.us-east-1.amazonaws.com/usermodels/telegram-svgrepo-com+1.svg" alt="Telegram" class="tg-icon">
+                <span>@qapptech</span> <!-- Текст, который будет подчеркнут -->
+            </a>
         </div>
     </footer>
 
@@ -415,7 +428,6 @@
 
             GRID_ROWS = dimension;
             GRID_COLS = dimension;
-            // Устанавливаем CSS переменную для адаптивного размера ячеек
             document.documentElement.style.setProperty('--grid-cols', GRID_COLS);
             console.log(`Determined grid size: ${GRID_ROWS}x${GRID_COLS} (maxLengthWord: ${maxLength})`);
         }
@@ -446,7 +458,6 @@
                 return;
             }
             document.getElementById('game-container').style.display = 'flex';
-
 
             if (CURRENT_QUIZ_QA_LIST.length === 0) {
                 alert("Критическая ошибка: список вопросов для игры пуст после выбора.");
@@ -540,18 +551,9 @@
         function renderGrid() {
             const gridTable = document.getElementById('letter-grid');
             gridTable.innerHTML = ''; 
-            let baseCellSize = 30; // Базовый размер для 10x10 или меньше
-
-            // Если сетка больше 10, немного уменьшаем ячейки,
-            // но не слишком сильно, чтобы текст оставался читаемым.
-            // Адаптивный calc в CSS @media query для мобильных будет иметь приоритет там.
-            if (GRID_COLS > 10) {
-                baseCellSize = 28;
-            }
-             if (GRID_COLS > 12) { // Максимум 12 у нас, но на всякий случай
-                baseCellSize = 26;
-            }
-
+            let baseCellSize = 30; 
+            if (GRID_COLS > 10) { baseCellSize = 28; }
+            if (GRID_COLS > 12) { baseCellSize = 26; }
 
             for (let r_render = 0; r_render < GRID_ROWS; r_render++) {
                 const tr = document.createElement('tr');
@@ -560,7 +562,6 @@
                     td.textContent = grid[r_render][c_render];
                     td.dataset.r = r_render;
                     td.dataset.c = c_render;
-                    // Применяем базовый размер на десктопе. На мобильных будет CSS calc.
                     td.style.width = `${baseCellSize}px`;
                     td.style.height = `${baseCellSize}px`;
                     td.style.fontSize = `${Math.max(10, baseCellSize - 12)}px`; 
