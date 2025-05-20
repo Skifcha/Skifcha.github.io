@@ -231,8 +231,6 @@
         @media (max-width: 768px) {
             body { padding: 0; }
             .header-container { margin-top: 25px; margin-bottom: 0; } /* Убрали нижний отступ, т.к. он у .subtitle */
-/*            .main-title { font-size: 24px; } /* Стили шрифта остаются из базовых */*/
-/*            .subtitle { font-size: 15px; margin-bottom: 26px; } /* Стили шрифта остаются, отступ сохраняется */*/
 
             #game-container { 
                 flex-direction: column; 
@@ -267,23 +265,8 @@
                 min-width: unset; 
                 margin-top: 0; /* Отступ управляется gap у #game-container */
             }
-             /* #questions-list li стили шрифта/цвета остаются */
-/*            #questions-list li { font-size: 16px; text-indent: 5px;} */
             
             #win-message { font-size: 20px; } /* Стили шрифта остаются */
-/*            .footer { flex-direction: column; gap: 10px; text-align: center;}*/
-             /* .footer-link, .footer-tg стили шрифта остаются */
-        }
-        
-        @media (max-width: 480px) {
-/*            .main-title { font-size: 20px; }*/
-/*            .subtitle { font-size: 14px; }*/
-/*            #questions-list li { font-size: 15px; }*/
-/*            .footer-link, .footer-tg { font-size: 14px;}*/
-            /* Адаптация размера ячеек для очень маленьких экранов, если предыдущий calc не справляется */
-             #letter-grid td {
-                 /* Можно добавить более агрессивное уменьшение или оставить как есть */
-             }
         }
     </style>
 </head>
